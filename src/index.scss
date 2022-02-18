@@ -1,0 +1,66 @@
+/* Tailwind */
+@import 'tailwindcss/dist/base.css';
+@import 'tailwindcss/dist/components.css';
+@import 'tailwindcss/dist/utilities.css';
+
+/* sass */
+
+$color-border: #ebdfdf;
+$color-titles: #5E6F00;
+$color-titles2: #ACB051;
+
+%boxShadow {
+    -webkit-box-shadow: -10px -10px 12px -16px rgba(0,0,0,0.38);
+    -moz-box-shadow: -10px -10px 12px -16px rgba(0,0,0,0.38);
+    box-shadow: -10px -10px 12px -16px rgba(0,0,0,0.38);
+}
+
+%display-flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.feature {
+    width: 100%;
+    max-width: 1000px;
+    grid-gap: 10px;
+    flex-wrap: wrap;
+    margin: 0 auto;
+    @extend %display-flex-center;
+    & > article {
+        padding: 10px;
+        border: 1px solid $color-border;
+        border-radius: 6px;
+        transition: .2s;
+        cursor: pointer;
+        @extend %boxShadow;
+
+        & > img {
+            width: 100%;
+            max-width: 380px;
+            object-fit: cover;
+        }
+
+        & > h2 {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: $color-titles;
+            border-top: 1px solid $color-border;
+            transition: .2s;
+        }
+
+        & > p {
+            font-size: .9rem;
+            font-weight: bold;
+        }
+    }
+
+    & > article:hover {
+        transform: translateY(-5px);
+
+        & > h2 {
+            color: $color-titles2;
+        }
+    }
+}

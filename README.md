@@ -22,61 +22,111 @@ npm run install:husky
 npm start
 ```
 
-✨ Optional: [Enable autopublish](#q-how-do-i-enable-auto-publish-to-github-pages) to get your site deployed on GitHub Pages on every commit you push.
+### Workshop 1: Fetch
 
-#### Optional install using Yarn:
+#### Presentación del proyecto
 
-```sh
-# Bootstrap the template into a new folder called `my-app`
-npx create-snowpack-app my-app --template snowpack-template-tailwind --use-yarn
+Consumiremos una api de aguacates para crear una tiendita
 
-# Enable Prettier on git-commit
-cd my-app
-yarn install:husky
+#### Descargando información y creando nodos
+
+``` js 
+const app = document.querySelector('#app')
+const totalArticles = []
+
+/* API */
+const urlApi = 'https://platzi-avo.vercel.app/api/avo'
+
+/* Wep API | Fetch */
+/* La utilizamos para traer recursos desde cualquier otro sitio web */
+    // 1 Conectarnos con el servidor
+    // 2 Procesar la respuesta y convertirla en JSON
+    // 3 JSON -> Data -> Renderizar la info en el browser
+
+//1 web api - nos conectamos al server
+window
+    .fetch(`${baseUrl}/api/avo`)
+    //2 procesamos la respuesta
+    .then(response => response.json())
+    //3 creamos elementos del DOM
+    .then(objectApiPromise => {
+        objectApiPromise.data.map(
+            i => {
+                const article = document.createElement('article')
+                let img = `${baseUrl}${i.image}`
+
+                /* ------------- *\
+                    Crear titulo
+                \* ------------- */
+                const title = document.createElement('h2')
+                /* Inyectamos contenido */
+                title.textContent = i.name
+
+                /* Agregamos estilos */
+                /*  title.style
+                    title.className */
+
+                /* ------------- *\
+                    Crear imagen
+                \* ------------- */
+                const imgg = document.createElement('img')
+                imgg.src = img
+
+                /* ------------- *\
+                    Crear precio
+                \* ------------- */
+                const price = document.createElement('p')
+                price.textContent = formatoPrecio(i.price)
+
+                /* ---- . ---- */
+                article.append(imgg, title, price)
+
+                /* pushea todos los articulos al array */
+                totalArticles.push(article)
+            }
+        )
+        app.append(...totalArticles)
+        app.className = 'feature';
+    })
 ```
 
-## Features
+#### Enriqueciendo la información
 
-- Snowpack, of course.
-- Tailwind.
-- Prettier.
-- Force prettier on git-commit.
-- Autopublish on Github Pages.
+Por medio de textContext y src inyectamos el contenido de la Api a nuestros elementos creados por cada iteracion.
 
-### Q: How do I enable auto publish to GitHub Pages?
+``` js
+let img = `${baseUrl}${item.image}`
 
-1. Update the value of `homepage` in `package.json`. It should look like `https://<your-username>.github.io/<your-repo-name>` (no trailing slash).
-1. Push your changes into a new GitHub repository.
-1. You should see an Action running on `https://github.com/<your-username>/<repo-name>/actions`
-1. Make sure to [enable GitHub pages for your repo](https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site#choosing-a-publishing-source) and select the `gh-pages` branch
-1. Give GH Pages some minutes, your site should be live on `https://<your-username>.github.io/<your-repo-name>`
-1. Enjoy :)
+title.textContent = item.name 
+imgg.src = img
+price.textContent = item.price
+```
 
-### Q: How do I disable auto publish to GitHub Pages?
+#### Usando la API de internacionalización del browser
 
-Remove the `.github/workflows/publish.yml` file.
+agregamos estilos por `.className ó .style` hay una más interesante llamada `.classList`, esta nos permite añadir y elimiar elementos de forma dinámica fácilmente (útil para cuando quieres eliminar o añadir una sola clase de manera dinámica)
 
-### Q: How do I check my code syntax (Prettier) on git-commit?
+``` js 
+// Primero puedes usar clases iniciales (aunque para código limpio lo mejor es definirlas directamente en el HTML)
+imagen.className = "h-16 w-16 md:h-24"
 
-Run `npm run install:husky`.
+// Y ahora podemos usar classList para añadir/borrar dinámicamente
+imagen.classList.add("md:w-24") // Añade una clase
+imagen.classList.remove("h-16") // Elimina una clase
+```
 
-## Available Scripts
+**internacionalización**
+    - Formato de fechas
+    - Formato de monedas
 
-### npm start
+``` js
+const formatoPrecio = (price) => {
 
-Runs the app in the development mode.
-Open http://localhost:8080 to view it in the browser.
+    const formatUSD = new window.Intl.NumberFormat('en-EN', {
+        style: 'currency',
+        currency: 'USD'
+    }).format(price)
 
-The page will reload if you make edits.
-You will also see any lint errors in the console.
-
-### npm run build
-
-Builds a static copy of your site to the `build/` folder.
-Your app is ready to be deployed!
-
-**For the best production performance:** Add a build bundler plugin like [@snowpack/plugin-webpack](https://github.com/snowpackjs/snowpack/tree/master/plugins/plugin-webpack) or [snowpack-plugin-rollup-bundle](https://github.com/ParamagicDev/snowpack-plugin-rollup-bundle) to your `snowpack.config.json` config file.
-
-### Q: What about Eject?
-
-No eject needed! Snowpack guarantees zero lock-in, and CSA strives for the same.
+    return formatUSD
+}
+```
